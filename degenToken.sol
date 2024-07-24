@@ -8,8 +8,7 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 contract DegenToken is ERC20, Ownable, ERC20Burnable {
     address public vault = 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c;
 
-    // Array to store redeemed items
-    string[] public redeemedItems;
+    mapping(address => string[]) private accountRedeemedItems;
 
     constructor(address payable initialOwner)
         ERC20("Degen", "DGN")
@@ -57,14 +56,14 @@ contract DegenToken is ERC20, Ownable, ERC20Burnable {
             revert("Invalid choice");
         }
 
-        redeemedItems.push(item);
+        accountRedeemedItems[msg.sender].push(item);
         emit ItemRedeemed(msg.sender, item);
     }
 
     event ItemRedeemed(address indexed player, string item);
 
-    // Function to get redeemed items array
-    function getRedeemedItems() external view returns (string[] memory) {
-        return redeemedItems;
+    // Function to get redeemed items for a specific account
+    function getRedeemedItemsForAccount(address account) external view returns (string[] memory) {
+        return accountRedeemedItems[account];
     }
 }
